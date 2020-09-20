@@ -1,8 +1,12 @@
 package qsort
 
 import "sync"
+import "time"
 
 func qsortBadInternal(input []int, wg *sync.WaitGroup) {
+	// for demo the effect of go scheduler
+	time.Sleep(1 * time.Nanosecond)
+
 	defer wg.Done()
 
 	// sentinal

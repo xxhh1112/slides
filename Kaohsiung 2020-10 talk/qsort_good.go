@@ -3,12 +3,16 @@ package qsort
 import (
 	"runtime"
 	"sync"
+	"time"
 )
 
 func qsortGoodWorker(inputCh chan []int, wg *sync.WaitGroup, remainingTaskNum *sync.WaitGroup) {
 	defer wg.Done()
 
 	for input := range inputCh {
+		// for demo the effect of go scheduler
+		time.Sleep(1 * time.Nanosecond)
+
 		// end condition of recursion
 		if len(input) <= 1 {
 			remainingTaskNum.Done()
@@ -33,9 +37,10 @@ func qsortGood(input []int) {
 	wg := sync.WaitGroup{}
 	remainingTaskNum := sync.WaitGroup{}
 
+	threadNum := runtime.NumCPU() * 2
 	inputCh := make(chan []int, len(input)/2+1)
-	wg.Add(runtime.NumCPU())
-	for i := 0; i < runtime.NumCPU(); i++ {
+	wg.Add(threadNum)
+	for i := 0; i < threadNum; i++ {
 		go qsortGoodWorker(inputCh, &wg, &remainingTaskNum)
 	}
 
